@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProfileActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyEvents</a> &gt; <span class="el_source">ProfileActivity.java</span></div><h1>ProfileActivity.java</h1><pre class="source lang-java linenums">package com.example.CyEvents;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.Sign_up_Page.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+/**
+ * ProfileActivity is an activity that handles the user profile screen. It displays the user's profile data such as username and password,
+ * and provides options to edit the username, interests, log out, and delete the account.
+ * The class interacts with a remote server to load, update, or delete user data using Volley HTTP requests.
+ */
+<span class="nc" id="L28">public class ProfileActivity extends AppCompatActivity {</span>
+
+    // UI components
+    private TextView usernameTextView;
+    private TextView passwordTextView;
+    private TextView editUsernameTextView;
+    private TextView editInterestsTextView;
+    private Button logOutButton;
+    private Button deleteAccountButton;
+
+    // Request queue for network operations
+    private RequestQueue requestQueue;
+
+    // User profile data
+    private String existingEmail;
+    private String existingPassword;
+
+    /**
+     * Called when the activity is created. It initializes the UI components and sets up listeners for actions like
+     * editing the username, interests, logging out, and deleting the account.
+     *
+     * @param savedInstanceState The saved instance state of the activity
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L53">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L54">        setContentView(R.layout.activity_profile);</span>
+
+        // Initialize UI components
+<span class="nc" id="L57">        usernameTextView = findViewById(R.id.usernameTextView);</span>
+<span class="nc" id="L58">        passwordTextView = findViewById(R.id.passwordTextView);</span>
+<span class="nc" id="L59">        editUsernameTextView = findViewById(R.id.editUsernameTextView);</span>
+<span class="nc" id="L60">        editInterestsTextView = findViewById(R.id.editInterestsTextView);</span>
+<span class="nc" id="L61">        logOutButton = findViewById(R.id.logOutButton);</span>
+<span class="nc" id="L62">        deleteAccountButton = findViewById(R.id.deleteAccountButton);</span>
+
+        // Initialize Volley request queue
+<span class="nc" id="L65">        requestQueue = Volley.newRequestQueue(this);</span>
+
+        // Load profile data from the server
+<span class="nc" id="L68">        loadProfile();</span>
+
+        // Set listeners for edit and action buttons
+<span class="nc" id="L71">        editUsernameTextView.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L74">                Intent intent = new Intent(ProfileActivity.this, ModifyUsernameActivity.class);</span>
+<span class="nc" id="L75">                startActivity(intent);</span>
+<span class="nc" id="L76">            }</span>
+        });
+
+<span class="nc" id="L79">        editInterestsTextView.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L82">                Intent intent = new Intent(ProfileActivity.this, CreateAccountActivity.class);</span>
+<span class="nc" id="L83">                startActivity(intent);</span>
+<span class="nc" id="L84">            }</span>
+        });
+
+<span class="nc" id="L87">        logOutButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L90">                logOut();</span>
+<span class="nc" id="L91">            }</span>
+        });
+
+<span class="nc" id="L94">        deleteAccountButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L97">                deleteAccount();</span>
+<span class="nc" id="L98">            }</span>
+        });
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * Loads the profile data from the server and displays it in the UI.
+     * The method checks if the response contains a nested &quot;Profile&quot; object or a flat structure.
+     * It also handles errors such as JSON parsing issues or network errors.
+     */
+    private void loadProfile() {
+<span class="nc" id="L108">        String url = &quot;http://10.90.73.72:8080/profiles/25&quot;; // Adjust endpoint or profile ID as needed</span>
+
+<span class="nc" id="L110">        StringRequest getRequest = new StringRequest(Request.Method.GET, url,</span>
+<span class="nc" id="L111">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+<span class="nc" id="L114">                        Log.d(&quot;API Response&quot;, response);  // Log the raw response for debugging</span>
+                        try {
+<span class="nc" id="L116">                            JSONObject jsonResponse = new JSONObject(response);</span>
+
+                            // Check if JSON has a &quot;Profile&quot; object or is flat
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                            if (jsonResponse.has(&quot;Profile&quot;)) {</span>
+<span class="nc" id="L120">                                JSONObject profile = jsonResponse.getJSONObject(&quot;Profile&quot;);</span>
+<span class="nc" id="L121">                                String username = profile.optString(&quot;username&quot;, &quot;N/A&quot;);</span>
+<span class="nc" id="L122">                                existingEmail = profile.optString(&quot;email&quot;, &quot;N/A&quot;);</span>
+<span class="nc" id="L123">                                existingPassword = profile.optString(&quot;password&quot;, &quot;N/A&quot;);</span>
+
+<span class="nc" id="L125">                                usernameTextView.setText(&quot;Username: &quot; + username);</span>
+<span class="nc" id="L126">                                passwordTextView.setText(&quot;Password: ••••••••&quot;);  // Obfuscate password</span>
+<span class="nc" id="L127">                            } else {</span>
+                                // Assume flat structure if &quot;Profile&quot; object is not present
+<span class="nc" id="L129">                                String username = jsonResponse.optString(&quot;username&quot;, &quot;N/A&quot;);</span>
+<span class="nc" id="L130">                                existingEmail = jsonResponse.optString(&quot;email&quot;, &quot;N/A&quot;);</span>
+<span class="nc" id="L131">                                existingPassword = jsonResponse.optString(&quot;password&quot;, &quot;N/A&quot;);</span>
+
+<span class="nc" id="L133">                                usernameTextView.setText(&quot;Username: &quot; + username);</span>
+<span class="nc" id="L134">                                passwordTextView.setText(&quot;Password: ••••••••&quot;);  // Obfuscate password</span>
+                            }
+
+<span class="nc" id="L137">                        } catch (JSONException e) {</span>
+<span class="nc" id="L138">                            Log.e(&quot;JSON Error&quot;, &quot;Error parsing response: &quot; + e.getMessage());</span>
+<span class="nc" id="L139">                            Toast.makeText(ProfileActivity.this, &quot;Error parsing response: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L140">                        }</span>
+<span class="nc" id="L141">                    }</span>
+                },
+<span class="nc" id="L143">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc bnc" id="L146" title="All 2 branches missed.">                        String errorMessage = error.getMessage() != null ? error.getMessage() : &quot;Unknown error&quot;;</span>
+<span class="nc" id="L147">                        Log.e(&quot;Volley Error&quot;, errorMessage);</span>
+<span class="nc" id="L148">                        Toast.makeText(ProfileActivity.this, &quot;Error: &quot; + errorMessage, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L149">                    }</span>
+                });
+
+<span class="nc" id="L152">        requestQueue.add(getRequest);</span>
+<span class="nc" id="L153">    }</span>
+
+    /**
+     * Handles the log out action. Displays a toast confirming successful logout and redirects to the SignInPage activity.
+     */
+    private void logOut() {
+<span class="nc" id="L159">        Toast.makeText(ProfileActivity.this, &quot;Logged out successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L160">        Intent intent = new Intent(ProfileActivity.this, SignInPage.class);</span>
+<span class="nc" id="L161">        startActivity(intent);</span>
+<span class="nc" id="L162">        finish();</span>
+<span class="nc" id="L163">    }</span>
+
+    /**
+     * Deletes the user's account by sending a DELETE request to the server. On success, it redirects the user to the SignInPage.
+     * It also handles error responses such as network issues or server errors.
+     */
+    private void deleteAccount() {
+<span class="nc" id="L170">        String url = &quot;http://10.90.73.72:8080/profiles/25&quot;; // Adjust endpoint or profile ID as needed</span>
+
+<span class="nc" id="L172">        StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, url,</span>
+<span class="nc" id="L173">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+<span class="nc" id="L176">                        Toast.makeText(ProfileActivity.this, &quot;Account deleted successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L177">                        Intent intent = new Intent(ProfileActivity.this, SignInPage.class);</span>
+<span class="nc" id="L178">                        startActivity(intent);</span>
+<span class="nc" id="L179">                        finish();</span>
+<span class="nc" id="L180">                    }</span>
+                },
+<span class="nc" id="L182">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc bnc" id="L185" title="All 2 branches missed.">                        String errorMessage = error.getMessage() != null ? error.getMessage() : &quot;Unknown error&quot;;</span>
+<span class="nc" id="L186">                        Log.e(&quot;Volley Error&quot;, errorMessage);</span>
+<span class="nc" id="L187">                        Toast.makeText(ProfileActivity.this, &quot;Error: &quot; + errorMessage, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L188">                    }</span>
+                });
+
+<span class="nc" id="L191">        requestQueue.add(deleteRequest);</span>
+<span class="nc" id="L192">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.0</div></body></html>

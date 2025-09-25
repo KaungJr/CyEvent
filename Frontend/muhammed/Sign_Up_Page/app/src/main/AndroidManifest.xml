@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permission to allow internet access -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:usesCleartextTraffic="true"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"> <!-- Updated theme -->
+
+        <activity
+            android:name="com.example.CyEvents.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.example.CyEvents.SignInPage"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name="com.example.CyEvents.MainPageActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name="com.example.CyEvents.ModifyUsernameActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name="com.example.CyEvents.CreateEventActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name="com.example.CyEvents.EditEventActivity"
+            android:exported="true">
+        </activity>
+
+        <!-- Added UserChatActivity -->
+        <activity
+            android:name="com.example.CyEvents.UserChatActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name="com.example.CyEvents.ProfileActivity"
+            android:exported="true">
+        </activity>
+
+        <service
+            android:name="com.example.CyEvents.UserChatService"
+            android:enabled="true"
+            android:exported="true" />
+
+    </application>
+</manifest>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ModifyUsernameActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyEvents</a> &gt; <span class="el_source">ModifyUsernameActivity.java</span></div><h1>ModifyUsernameActivity.java</h1><pre class="source lang-java linenums">package com.example.CyEvents;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.Sign_up_Page.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Activity for modifying a user's username.
+ * Handles the UI for inputting the current and new username, checks if the username exists,
+ * and updates the username if valid.
+ */
+<span class="nc" id="L31">public class ModifyUsernameActivity extends AppCompatActivity {</span>
+
+    // UI elements
+    private EditText currentUsernameEditText;
+    private EditText newUsernameEditText;
+    private Button updateUsernameButton;
+
+    // Request queue for making network requests
+    private RequestQueue requestQueue;
+
+    // Existing user credentials
+    private String existingEmail;
+    private String existingPassword;
+
+    /**
+     * Called when the activity is first created.
+     * Initializes the UI components and sets up the event listener for the update button.
+     *
+     * @param savedInstanceState A bundle containing saved instance state, if any.
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L53">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L54">        setContentView(R.layout.activity_modifyusernameactivity);</span>
+
+        // Initialize UI components
+<span class="nc" id="L57">        currentUsernameEditText = findViewById(R.id.currentUsernameEditText);</span>
+<span class="nc" id="L58">        newUsernameEditText = findViewById(R.id.newUsernameEditText);</span>
+<span class="nc" id="L59">        updateUsernameButton = findViewById(R.id.updateUsernameButton);</span>
+
+        // Initialize the request queue
+<span class="nc" id="L62">        requestQueue = Volley.newRequestQueue(this);</span>
+
+        // Set up the listener for the update button
+<span class="nc" id="L65">        updateUsernameButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L68">                String currentUsername = currentUsernameEditText.getText().toString();</span>
+<span class="nc" id="L69">                String newUsername = newUsernameEditText.getText().toString();</span>
+
+<span class="nc bnc" id="L71" title="All 4 branches missed.">                if (!currentUsername.isEmpty() &amp;&amp; !newUsername.isEmpty()) {</span>
+<span class="nc" id="L72">                    checkIfUsernameExists(currentUsername, newUsername);</span>
+                } else {
+<span class="nc" id="L74">                    Toast.makeText(ModifyUsernameActivity.this, &quot;Please fill both fields&quot;, Toast.LENGTH_SHORT).show();</span>
+                }
+<span class="nc" id="L76">            }</span>
+        });
+<span class="nc" id="L78">    }</span>
+
+    /**
+     * Checks if the current username exists and if it does, proceeds to update it to the new username.
+     *
+     * @param currentUsername The current username to verify.
+     * @param newUsername The new username to update to.
+     */
+    private void checkIfUsernameExists(final String currentUsername, final String newUsername) {
+<span class="nc" id="L87">        String url = &quot;http://10.90.73.72:8080/profiles/25&quot;; // Adjust ID as needed</span>
+
+<span class="nc" id="L89">        Log.d(&quot;ModifyUsernameActivity&quot;, &quot;Checking if username exists for current: &quot; + currentUsername);</span>
+
+<span class="nc" id="L91">        StringRequest getRequest = new StringRequest(Request.Method.GET, url,</span>
+<span class="nc" id="L92">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+<span class="nc" id="L95">                        Log.d(&quot;Server Response&quot;, response);</span>
+                        try {
+<span class="nc" id="L97">                            JSONObject jsonResponse = new JSONObject(response);</span>
+
+                            // Check for both flat and nested JSON response structures
+                            String existingUsername;
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                            if (jsonResponse.has(&quot;Profile&quot;)) {</span>
+<span class="nc" id="L102">                                JSONObject profile = jsonResponse.getJSONObject(&quot;Profile&quot;);</span>
+<span class="nc" id="L103">                                existingUsername = profile.optString(&quot;username&quot;, &quot;N/A&quot;);</span>
+<span class="nc" id="L104">                                existingEmail = profile.optString(&quot;email&quot;, &quot;N/A&quot;);</span>
+<span class="nc" id="L105">                                existingPassword = profile.optString(&quot;password&quot;, &quot;N/A&quot;);</span>
+<span class="nc" id="L106">                            } else {</span>
+<span class="nc" id="L107">                                existingUsername = jsonResponse.optString(&quot;username&quot;, &quot;N/A&quot;);</span>
+<span class="nc" id="L108">                                existingEmail = jsonResponse.optString(&quot;email&quot;, &quot;N/A&quot;);</span>
+<span class="nc" id="L109">                                existingPassword = jsonResponse.optString(&quot;password&quot;, &quot;N/A&quot;);</span>
+                            }
+
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                            if (existingUsername.equals(currentUsername)) {</span>
+<span class="nc" id="L113">                                updateUsername(newUsername);</span>
+                            } else {
+<span class="nc" id="L115">                                Toast.makeText(ModifyUsernameActivity.this, &quot;Current username doesn't match&quot;, Toast.LENGTH_SHORT).show();</span>
+                            }
+
+<span class="nc" id="L118">                        } catch (JSONException e) {</span>
+<span class="nc" id="L119">                            Log.e(&quot;JSON Error&quot;, &quot;Error parsing response: &quot; + e.getMessage());</span>
+<span class="nc" id="L120">                            Toast.makeText(ModifyUsernameActivity.this, &quot;Error parsing response: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L121">                        }</span>
+<span class="nc" id="L122">                    }</span>
+                },
+<span class="nc" id="L124">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                        String errorMessage = error.networkResponse != null</span>
+<span class="nc" id="L128">                                ? &quot;Status code: &quot; + error.networkResponse.statusCode + &quot;, message: &quot; + new String(error.networkResponse.data)</span>
+<span class="nc" id="L129">                                : &quot;Unknown error&quot;;</span>
+<span class="nc" id="L130">                        Log.e(&quot;Volley Error&quot;, errorMessage);</span>
+<span class="nc" id="L131">                        Toast.makeText(ModifyUsernameActivity.this, &quot;Error: &quot; + errorMessage, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L132">                    }</span>
+                });
+
+<span class="nc" id="L135">        requestQueue.add(getRequest);</span>
+<span class="nc" id="L136">    }</span>
+
+    /**
+     * Updates the username of the user to the new username provided.
+     *
+     * @param newUsername The new username to set.
+     */
+    private void updateUsername(final String newUsername) {
+<span class="nc" id="L144">        String url = &quot;http://10.90.73.72:8080/profiles/25&quot;; // Adjust ID as needed</span>
+
+        // Create a JSON body for the PUT request
+<span class="nc" id="L147">        JSONObject jsonBody = new JSONObject();</span>
+        try {
+<span class="nc" id="L149">            jsonBody.put(&quot;username&quot;, newUsername);</span>
+<span class="nc" id="L150">            jsonBody.put(&quot;email&quot;, existingEmail);</span>
+<span class="nc" id="L151">            jsonBody.put(&quot;password&quot;, existingPassword);</span>
+<span class="nc" id="L152">        } catch (JSONException e) {</span>
+<span class="nc" id="L153">            Toast.makeText(ModifyUsernameActivity.this, &quot;Error creating JSON: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L154">            return;</span>
+<span class="nc" id="L155">        }</span>
+
+<span class="nc" id="L157">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonBody,</span>
+<span class="nc" id="L158">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L161">                        Log.d(&quot;Update Response&quot;, response.toString());</span>
+                        try {
+<span class="nc" id="L163">                            String message = response.optString(&quot;message&quot;, &quot;Username updated successfully&quot;);</span>
+<span class="nc" id="L164">                            Toast.makeText(ModifyUsernameActivity.this, message, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L165">                        } catch (Exception e) {</span>
+<span class="nc" id="L166">                            Toast.makeText(ModifyUsernameActivity.this, &quot;Error parsing response: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L167">                        }</span>
+<span class="nc" id="L168">                    }</span>
+                },
+<span class="nc" id="L170">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String errorMessage;
+<span class="nc bnc" id="L174" title="All 4 branches missed.">                        if (error.networkResponse != null &amp;&amp; error.networkResponse.data != null) {</span>
+<span class="nc" id="L175">                            errorMessage = new String(error.networkResponse.data);</span>
+                        } else {
+<span class="nc bnc" id="L177" title="All 2 branches missed.">                            errorMessage = error.getMessage() != null ? error.getMessage() : &quot;Unknown error&quot;;</span>
+                        }
+<span class="nc" id="L179">                        Log.e(&quot;Volley Error&quot;, errorMessage);</span>
+<span class="nc" id="L180">                        Toast.makeText(ModifyUsernameActivity.this, &quot;Error: &quot; + errorMessage, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L181">                    }</span>
+<span class="nc" id="L182">                }) {</span>
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="nc" id="L185">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L186">                headers.put(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L187">                return headers;</span>
+            }
+        };
+
+<span class="nc" id="L191">        requestQueue.add(jsonObjectRequest);</span>
+<span class="nc" id="L192">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.0</div></body></html>

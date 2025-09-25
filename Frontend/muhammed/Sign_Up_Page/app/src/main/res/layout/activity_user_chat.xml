@@ -1,0 +1,110 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#f7f7f7">
+
+    <!-- Reply Context Section -->
+<TextView
+android:id="@+id/replyContextText"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:textColor="#4CAF50"
+android:visibility="gone"
+android:padding="12dp"
+android:textStyle="bold"
+android:background="@android:color/white"
+android:layout_margin="8dp"
+android:layout_gravity="center"/>
+
+    <!-- RecyclerView for Chat Messages -->
+<androidx.recyclerview.widget.RecyclerView
+android:id="@+id/messageRecyclerView"
+android:layout_width="match_parent"
+android:layout_height="0dp"
+android:layout_weight="1"
+android:padding="8dp"
+android:clipToPadding="false"
+android:background="@drawable/rounded_chat_background"
+android:layout_marginTop="8dp"/>
+
+    <!-- Input Section -->
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical"
+android:padding="16dp"
+android:background="#FFFFFF"
+android:elevation="4dp"
+android:layout_marginTop="8dp"
+android:layout_gravity="bottom">
+
+<com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/msgInputLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:boxBackgroundMode="outline"
+app:boxStrokeColor="@android:color/darker_gray"
+android:layout_marginBottom="8dp">
+
+<com.google.android.material.textfield.TextInputEditText
+    android:id="@+id/msgEdt"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="Type a message"
+    android:textColorHint="@android:color/darker_gray"
+    android:background="@drawable/edit_text_background"
+    android:padding="12dp"
+    android:textSize="16sp"
+    android:layout_marginEnd="8dp"/>
+</com.google.android.material.textfield.TextInputLayout>
+
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:gravity="center_vertical"
+android:layout_marginTop="8dp">
+
+<Button
+    android:id="@+id/imageBtn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Image"
+    android:background="@drawable/rounded_button"
+    android:textColor="@android:color/white"
+    android:layout_marginEnd="8dp"/>
+
+<Button
+    android:id="@+id/sendBtn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Send"
+    android:background="@drawable/rounded_button"
+    android:textColor="@android:color/white"/>
+</LinearLayout>
+
+    <!-- Typing Indicator -->
+<TextView
+android:id="@+id/typingIndicator"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:visibility="gone"
+android:text="User is typing..."
+android:textColor="#888888"
+android:layout_marginTop="8dp"/>
+
+    <!-- Cancel Reply Button -->
+<Button
+android:id="@+id/cancelReplyBtn"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Cancel Reply"
+android:visibility="gone"
+android:background="@drawable/rounded_button"
+android:textColor="@android:color/white"
+android:layout_marginTop="4dp"/>
+    </LinearLayout>
+    </LinearLayout>

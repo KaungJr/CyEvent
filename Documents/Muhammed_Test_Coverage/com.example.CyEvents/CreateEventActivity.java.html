@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateEventActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyEvents</a> &gt; <span class="el_source">CreateEventActivity.java</span></div><h1>CreateEventActivity.java</h1><pre class="source lang-java linenums">package com.example.CyEvents;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.Sign_up_Page.R;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+/**
+ * CreateEventActivity is an Android activity that allows the user to create a new event by filling out a form.
+ * This activity collects event details such as the title, date, time, location, description, organizer ID, and approval status.
+ */
+<span class="fc" id="L23">public class CreateEventActivity extends AppCompatActivity {</span>
+
+    private EditText eventTitleInput;
+    private EditText eventDateInput;
+    private EditText eventTimeInput;
+    private EditText eventLocationInput;
+    private EditText eventDescriptionInput;
+    private EditText eventOrganizerInput;
+    private EditText eventApprovalStatusInput;
+    private EditText eventApprovalReasonInput;
+    private Button saveEventButton;
+
+    private static final String TAG = &quot;CreateEventActivity&quot;;
+    private static final String CREATE_EVENT_URL = &quot;http://10.90.73.72:8080/events&quot;;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L40">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L41">        setContentView(R.layout.activity_create_event);</span>
+
+        // Initialize input fields and button
+<span class="fc" id="L44">        eventTitleInput = findViewById(R.id.eventTitleInput);</span>
+<span class="fc" id="L45">        eventDateInput = findViewById(R.id.eventDateInput);</span>
+<span class="fc" id="L46">        eventTimeInput = findViewById(R.id.eventTimeInput);</span>
+<span class="fc" id="L47">        eventLocationInput = findViewById(R.id.eventLocationInput);</span>
+<span class="fc" id="L48">        eventDescriptionInput = findViewById(R.id.eventDescriptionInput);</span>
+<span class="fc" id="L49">        eventOrganizerInput = findViewById(R.id.eventOrganizerInput);</span>
+<span class="fc" id="L50">        eventApprovalStatusInput = findViewById(R.id.eventApprovalStatusInput);</span>
+<span class="fc" id="L51">        eventApprovalReasonInput = findViewById(R.id.eventApprovalReasonInput);</span>
+<span class="fc" id="L52">        saveEventButton = findViewById(R.id.saveEventButton);</span>
+
+        // Set click listener for saving event
+<span class="fc" id="L55">        saveEventButton.setOnClickListener(view -&gt; createEvent());</span>
+<span class="fc" id="L56">    }</span>
+
+    private void createEvent() {
+<span class="fc" id="L59">        JSONObject event = new JSONObject();</span>
+        try {
+            // Collect event data from input fields
+<span class="fc" id="L62">            event.put(&quot;name&quot;, eventTitleInput.getText().toString().trim());</span>
+<span class="fc" id="L63">            event.put(&quot;date&quot;, eventDateInput.getText().toString().trim());</span>
+<span class="fc" id="L64">            event.put(&quot;time&quot;, eventTimeInput.getText().toString().trim());</span>
+<span class="fc" id="L65">            event.put(&quot;location&quot;, eventLocationInput.getText().toString().trim());</span>
+<span class="fc" id="L66">            event.put(&quot;description&quot;, eventDescriptionInput.getText().toString().trim());</span>
+
+            // Add the 'organizer' object
+<span class="fc" id="L69">            String organizerIdString = eventOrganizerInput.getText().toString().trim();</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">            if (organizerIdString.isEmpty()) {</span>
+<span class="nc" id="L71">                Toast.makeText(this, &quot;Organizer ID cannot be empty&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L72">                return;</span>
+            }
+<span class="fc" id="L74">            long organizerId = Long.parseLong(organizerIdString);</span>
+<span class="fc" id="L75">            JSONObject organizer = new JSONObject();</span>
+<span class="fc" id="L76">            organizer.put(&quot;id&quot;, organizerId);</span>
+<span class="fc" id="L77">            event.put(&quot;organizer&quot;, organizer);</span>
+
+            // Add approval status and reason
+<span class="fc" id="L80">            String approvalStatus = eventApprovalStatusInput.getText().toString().trim();</span>
+<span class="fc" id="L81">            String approvalReason = eventApprovalReasonInput.getText().toString().trim();</span>
+<span class="pc bpc" id="L82" title="2 of 4 branches missed.">            if (approvalStatus.isEmpty() || approvalReason.isEmpty()) {</span>
+<span class="nc" id="L83">                Toast.makeText(this, &quot;Approval status and reason cannot be empty&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L84">                return;</span>
+            }
+<span class="fc" id="L86">            JSONObject approval = new JSONObject();</span>
+<span class="fc" id="L87">            approval.put(&quot;isApproved&quot;, approvalStatus);</span>
+<span class="fc" id="L88">            approval.put(&quot;approvalReason&quot;, approvalReason);</span>
+<span class="fc" id="L89">            event.put(&quot;approval&quot;, approval);</span>
+
+            // Log the created event JSON for debugging
+<span class="fc" id="L92">            Log.d(TAG, &quot;Event JSON: &quot; + event.toString());</span>
+<span class="nc" id="L93">        } catch (JSONException | NumberFormatException e) {</span>
+<span class="nc" id="L94">            Log.e(TAG, &quot;Error creating event JSON: &quot; + e.getMessage());</span>
+<span class="nc" id="L95">            Toast.makeText(this, &quot;Error creating event JSON: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L96">            return;</span>
+<span class="fc" id="L97">        }</span>
+
+        // Initialize Volley request queue
+<span class="fc" id="L100">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L101">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, CREATE_EVENT_URL, event,</span>
+                response -&gt; {
+                    // Handle successful event creation
+<span class="fc" id="L104">                    Toast.makeText(this, &quot;Event created successfully!&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L105">                    Log.d(TAG, &quot;Response: &quot; + response.toString());</span>
+<span class="fc" id="L106">                    setResult(RESULT_OK); // Set result for the calling activity</span>
+<span class="fc" id="L107">                    finish(); // Close the activity</span>
+<span class="fc" id="L108">                },</span>
+                error -&gt; {
+                    // Handle error during the network request
+<span class="nc" id="L111">                    String message = error.getMessage();</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                    if (error.networkResponse != null) {</span>
+<span class="nc" id="L113">                        int statusCode = error.networkResponse.statusCode;</span>
+<span class="nc" id="L114">                        String errorResponse = new String(error.networkResponse.data);</span>
+<span class="nc" id="L115">                        Log.e(TAG, &quot;Error Status Code: &quot; + statusCode);</span>
+<span class="nc" id="L116">                        Log.e(TAG, &quot;Error Response: &quot; + errorResponse);</span>
+<span class="nc" id="L117">                        message = &quot;Error: &quot; + statusCode + &quot; &quot; + errorResponse;</span>
+<span class="nc" id="L118">                    } else {</span>
+<span class="nc" id="L119">                        Log.e(TAG, &quot;Network error: &quot; + message);</span>
+                    }
+<span class="nc" id="L121">                    Toast.makeText(this, &quot;Error creating event: &quot; + message, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L122">                });</span>
+
+        // Add the request to the Volley request queue
+<span class="fc" id="L125">        requestQueue.add(jsonObjectRequest);</span>
+<span class="fc" id="L126">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.0</div></body></html>

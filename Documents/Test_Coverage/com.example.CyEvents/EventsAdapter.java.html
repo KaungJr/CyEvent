@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventsAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyEvents</a> &gt; <span class="el_source">EventsAdapter.java</span></div><h1>EventsAdapter.java</h1><pre class="source lang-java linenums">package com.example.CyEvents;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.Sign_up_Page.R;
+import java.util.List;
+
+/**
+ * EventsAdapter is a custom RecyclerView adapter that binds event data to the RecyclerView items.
+ * The adapter takes a list of Event objects and handles displaying each event's title in a view.
+ */
+public class EventsAdapter extends RecyclerView.Adapter&lt;EventsAdapter.EventViewHolder&gt; {
+
+    private List&lt;Event&gt; events; // List of Event objects to be displayed
+    private OnItemClickListener onItemClickListener; // Listener for handling item click events
+
+    /**
+     * Interface definition for a callback to be invoked when an item in the RecyclerView is clicked.
+     */
+    public interface OnItemClickListener {
+        /**
+         * Method to be called when an event item is clicked.
+         *
+         * @param event The Event object that was clicked.
+         * @param position The position of the clicked event in the list.
+         */
+        void onItemClick(Event event, int position);
+    }
+
+    /**
+     * Constructor for the EventsAdapter.
+     *
+     * @param events A list of Event objects to be displayed in the RecyclerView.
+     */
+<span class="fc" id="L39">    public EventsAdapter(List&lt;Event&gt; events) {</span>
+<span class="fc" id="L40">        this.events = events; // Initialize the event list</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * Called when a new ViewHolder needs to be created. This method creates and returns a new
+     * EventViewHolder with the specified view.
+     *
+     * @param parent The parent view that the new ViewHolder will be added to.
+     * @param viewType The view type of the new ViewHolder.
+     * @return A new EventViewHolder instance.
+     */
+    @NonNull
+    @Override
+    public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+<span class="fc" id="L54">        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_event, parent, false);</span>
+<span class="fc" id="L55">        return new EventViewHolder(view);</span>
+    }
+
+    /**
+     * Called by the RecyclerView to display the event data at a specified position. This method
+     * binds the event data to the provided ViewHolder.
+     *
+     * @param holder The ViewHolder in which the event data should be displayed.
+     * @param position The position of the event in the list.
+     */
+    @Override
+    public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
+<span class="fc" id="L67">        Event event = events.get(position); // Get the event at the current position</span>
+<span class="fc" id="L68">        holder.bind(event, onItemClickListener, position); // Bind the event data to the ViewHolder</span>
+<span class="fc" id="L69">        holder.itemView.setAlpha(0); // Set initial alpha to 0 for fade-in effect</span>
+<span class="fc" id="L70">        holder.itemView.animate().alpha(1).setDuration(500).start(); // Animate fade-in</span>
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * Returns the number of events in the adapter.
+     *
+     * @return The total number of events.
+     */
+    @Override
+    public int getItemCount() {
+<span class="fc" id="L80">        return events.size();</span>
+    }
+
+    /**
+     * Sets the OnItemClickListener for the adapter.
+     *
+     * @param listener The listener to handle click events on the RecyclerView items.
+     */
+    public void setOnItemClickListener(OnItemClickListener listener) {
+<span class="fc" id="L89">        this.onItemClickListener = listener; // Set the click listener for event items</span>
+<span class="fc" id="L90">    }</span>
+
+    /**
+     * EventViewHolder is a static inner class that extends RecyclerView.ViewHolder and is used to
+     * display event data in the RecyclerView item view.
+     */
+    static class EventViewHolder extends RecyclerView.ViewHolder {
+        private TextView eventTitle; // TextView to display the event title
+        private TextView eventDate; // TextView to display the event date
+        private TextView eventTime; // TextView to display the event time
+        private TextView eventLocation; // TextView to display the event location
+
+        /**
+         * Constructor for the EventViewHolder.
+         *
+         * @param itemView The view for the RecyclerView item.
+         */
+        public EventViewHolder(@NonNull View itemView) {
+<span class="fc" id="L108">            super(itemView); // Call the superclass constructor</span>
+<span class="fc" id="L109">            eventTitle = itemView.findViewById(R.id.eventTitle); // Initialize the TextView for displaying event title</span>
+<span class="fc" id="L110">            eventDate = itemView.findViewById(R.id.eventDate); // Initialize the TextView for displaying event date</span>
+<span class="fc" id="L111">            eventTime = itemView.findViewById(R.id.eventTime); // Initialize the TextView for displaying event time</span>
+<span class="fc" id="L112">            eventLocation = itemView.findViewById(R.id.eventLocation); // Initialize the TextView for displaying event location</span>
+<span class="fc" id="L113">        }</span>
+
+        /**
+         * Binds the event data to the ViewHolder.
+         *
+         * @param event The Event object to display.
+         * @param listener The listener to handle click events.
+         * @param position The position of the event in the list.
+         */
+        public void bind(Event event, OnItemClickListener listener, int position) {
+<span class="fc" id="L123">            eventTitle.setText(event.getTitle()); // Set the event title in the TextView</span>
+<span class="fc" id="L124">            eventDate.setText(&quot;Date: &quot; + event.getDate()); // Set the event date in the TextView</span>
+<span class="fc" id="L125">            eventTime.setText(&quot;Time: &quot; + event.getTime()); // Set the event time in the TextView</span>
+<span class="fc" id="L126">            eventLocation.setText(&quot;Location: &quot; + event.getLocation()); // Set the event location in the TextView</span>
+
+<span class="fc" id="L128">            itemView.setOnClickListener(v -&gt; {</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">                if (listener != null) { // Check if the listener is set</span>
+<span class="nc" id="L130">                    listener.onItemClick(event, position); // Notify the listener of item click</span>
+                }
+<span class="nc" id="L132">            });</span>
+<span class="fc" id="L133">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.0</div></body></html>

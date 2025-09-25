@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChatMessage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyEvents</a> &gt; <span class="el_source">ChatMessage.java</span></div><h1>ChatMessage.java</h1><pre class="source lang-java linenums">package com.example.CyEvents;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class ChatMessage {
+
+    public static final int STATUS_SENDING = 0;
+    public static final int STATUS_SENT = 1;
+    public static final int STATUS_DELIVERED = 2;
+
+    public static final int TYPE_TEXT = 0;
+    public static final int TYPE_IMAGE = 1;
+
+    private String message;
+    private String replyText;
+    private boolean isReply;
+    private String reaction;
+    private int status;
+    private String timestamp;
+    private boolean isForwarded;
+    private String imageUrl;
+    private int messageType;
+    private String username; // Added username field
+
+    /**
+     * Constructor for text messages.
+     *
+     * @param message The text message content.
+     */
+<span class="fc" id="L31">    public ChatMessage(String message) {</span>
+<span class="fc" id="L32">        this.message = message;</span>
+<span class="fc" id="L33">        this.isReply = false;</span>
+<span class="fc" id="L34">        this.reaction = &quot;&quot;;</span>
+<span class="fc" id="L35">        this.status = STATUS_SENDING;</span>
+<span class="fc" id="L36">        this.timestamp = getCurrentTimestamp();</span>
+<span class="fc" id="L37">        this.isForwarded = false;</span>
+<span class="fc" id="L38">        this.messageType = TYPE_TEXT;</span>
+<span class="fc" id="L39">    }</span>
+
+    /**
+     * Constructor for reply messages.
+     *
+     * @param replyText The reply text content.
+     * @param originalMessage The original message being replied to.
+     */
+<span class="nc" id="L47">    public ChatMessage(String replyText, String originalMessage) {</span>
+<span class="nc" id="L48">        this.replyText = replyText;</span>
+<span class="nc" id="L49">        this.message = originalMessage;</span>
+<span class="nc" id="L50">        this.isReply = true;</span>
+<span class="nc" id="L51">        this.reaction = &quot;&quot;;</span>
+<span class="nc" id="L52">        this.timestamp = getCurrentTimestamp();</span>
+<span class="nc" id="L53">        this.isForwarded = false;</span>
+<span class="nc" id="L54">        this.messageType = TYPE_TEXT;</span>
+<span class="nc" id="L55">    }</span>
+
+    /**
+     * Constructor for image messages.
+     *
+     * @param imageUrl The URL of the image.
+     * @param isReply Indicates if the message is a reply.
+     */
+<span class="nc" id="L63">    public ChatMessage(String imageUrl, boolean isReply) {</span>
+<span class="nc" id="L64">        this.imageUrl = imageUrl;</span>
+<span class="nc" id="L65">        this.isReply = isReply;</span>
+<span class="nc" id="L66">        this.messageType = TYPE_IMAGE;</span>
+<span class="nc" id="L67">        this.timestamp = getCurrentTimestamp();</span>
+<span class="nc" id="L68">        this.reaction = &quot;&quot;;</span>
+<span class="nc" id="L69">        this.isForwarded = false;</span>
+<span class="nc" id="L70">    }</span>
+
+    /**
+     * New constructor for a message, reply, and username.
+     *
+     * @param message The text message content.
+     * @param replyText The reply text content (optional).
+     * @param username The username of the sender.
+     */
+<span class="nc" id="L79">    public ChatMessage(String message, String replyText, String username) {</span>
+<span class="nc" id="L80">        this.message = message;</span>
+<span class="nc" id="L81">        this.replyText = replyText;</span>
+<span class="nc" id="L82">        this.username = username;</span>
+<span class="nc bnc" id="L83" title="All 4 branches missed.">        this.isReply = replyText != null &amp;&amp; !replyText.isEmpty();</span>
+<span class="nc" id="L84">        this.reaction = &quot;&quot;;</span>
+<span class="nc" id="L85">        this.status = STATUS_SENDING;</span>
+<span class="nc" id="L86">        this.timestamp = getCurrentTimestamp();</span>
+<span class="nc" id="L87">        this.isForwarded = false;</span>
+<span class="nc" id="L88">        this.messageType = TYPE_TEXT;</span>
+<span class="nc" id="L89">    }</span>
+
+    private String getCurrentTimestamp() {
+<span class="fc" id="L92">        SimpleDateFormat sdf = new SimpleDateFormat(&quot;hh:mm a&quot;);</span>
+<span class="fc" id="L93">        return sdf.format(new Date());</span>
+    }
+
+    public String getTimestamp() {
+<span class="fc" id="L97">        return timestamp;</span>
+    }
+
+    public int getStatus() {
+<span class="nc" id="L101">        return status;</span>
+    }
+
+    public void setStatus(int status) {
+<span class="fc" id="L105">        this.status = status;</span>
+<span class="fc" id="L106">    }</span>
+
+    public String getMessage() {
+<span class="fc" id="L109">        return message;</span>
+    }
+
+    public String getReplyText() {
+<span class="nc" id="L113">        return replyText;</span>
+    }
+
+    public boolean isReply() {
+<span class="fc" id="L117">        return isReply;</span>
+    }
+
+    public String getReaction() {
+<span class="fc" id="L121">        return reaction;</span>
+    }
+
+    public void setReaction(String reaction) {
+<span class="nc" id="L125">        this.reaction = reaction;</span>
+<span class="nc" id="L126">    }</span>
+
+    public String getOriginalMessage() {
+<span class="nc" id="L129">        return message;</span>
+    }
+
+    public boolean isForwarded() {
+<span class="nc" id="L133">        return isForwarded;</span>
+    }
+
+    public void setForwarded(boolean forwarded) {
+<span class="nc" id="L137">        isForwarded = forwarded;</span>
+<span class="nc" id="L138">    }</span>
+
+    public String getImageUrl() {
+<span class="nc" id="L141">        return imageUrl;</span>
+    }
+
+    public void setImageUrl(String imageUrl) {
+<span class="nc" id="L145">        this.imageUrl = imageUrl;</span>
+<span class="nc" id="L146">    }</span>
+
+    public int getMessageType() {
+<span class="nc" id="L149">        return messageType;</span>
+    }
+
+    public void setMessageType(int messageType) {
+<span class="nc" id="L153">        this.messageType = messageType;</span>
+<span class="nc" id="L154">    }</span>
+
+    public boolean isImageMessage() {
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        return messageType == TYPE_IMAGE;</span>
+    }
+
+    public String getImageUri() {
+<span class="nc" id="L161">        return imageUrl;</span>
+    }
+
+    public String getUsername() {
+<span class="nc" id="L165">        return username;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.0</div></body></html>

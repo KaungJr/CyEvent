@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5"
+    android:padding="16dp">
+
+    <!-- Event Title -->
+    <EditText
+        android:id="@+id/eventTitleInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Event Title"
+        android:textColor="#333333"
+        android:textColorHint="#888888"
+        android:inputType="text"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Event Date -->
+    <EditText
+        android:id="@+id/eventDateInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Event Date (YYYY-MM-DD)"
+        android:textColor="#333333"
+        android:textColorHint="#888888"
+        android:inputType="date"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Event Time -->
+    <EditText
+        android:id="@+id/eventTimeInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Event Time (HH:MM)"
+        android:textColor="#333333"
+        android:textColorHint="#888888"
+        android:inputType="time"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Event Location -->
+    <EditText
+        android:id="@+id/eventLocationInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Event Location"
+        android:textColor="#333333"
+        android:textColorHint="#888888"
+        android:inputType="text"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Event Description -->
+    <EditText
+        android:id="@+id/eventDescriptionInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Event Description"
+        android:textColor="#333333"
+        android:textColorHint="#888888"
+        android:inputType="textMultiLine"
+        android:lines="3"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Organizer Name -->
+    <EditText
+        android:id="@+id/eventOrganizerInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Organizer Name"
+        android:textColor="#333333"
+        android:textColorHint="#888888"
+        android:inputType="text"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp" />
+    <EditText
+        android:id="@+id/eventApprovalStatusInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Approval Status"
+        android:textColor="#333333"
+        android:textColorHint="#888888"
+        android:inputType="text"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/eventApprovalReasonInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Approval Reason"
+        android:textColor="#333333"
+        android:textColorHint="#888888"
+        android:inputType="text"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
+
+
+    <!-- Save Event Button -->
+    <Button
+        android:id="@+id/saveEventButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Event"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/rounded_button"
+        android:layout_marginTop="16dp" />
+</LinearLayout>

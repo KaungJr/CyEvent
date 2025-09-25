@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MainPageActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyEvents</a> &gt; <span class="el_source">MainPageActivity.java</span></div><h1>MainPageActivity.java</h1><pre class="source lang-java linenums">package com.example.CyEvents;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.Sign_up_Page.R;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+<span class="fc" id="L29">public class MainPageActivity extends AppCompatActivity {</span>
+
+    private Button addEventButton;
+    private RecyclerView eventsRecyclerView;
+    private EventsAdapter eventsAdapter;
+<span class="fc" id="L34">    private List&lt;Event&gt; eventsList = new ArrayList&lt;&gt;();</span>
+
+    private Button navMessages;
+    private Button navProfile;
+    private EditText searchBar;
+    private Button searchButton;
+
+    private Spinner sortSpinner; // Spinner for selecting sorting option
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L45">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L46">        setContentView(R.layout.activity_mainpage);</span>
+
+        // Initialize UI components
+<span class="fc" id="L49">        addEventButton = findViewById(R.id.addEventButton);</span>
+<span class="fc" id="L50">        eventsRecyclerView = findViewById(R.id.eventsRecyclerView);</span>
+<span class="fc" id="L51">        LinearLayout navMessages = findViewById(R.id.navMessages);</span>
+<span class="fc" id="L52">        LinearLayout navProfile = findViewById(R.id.navProfile);</span>
+<span class="fc" id="L53">        searchBar = findViewById(R.id.searchEditText);</span>
+<span class="fc" id="L54">        searchButton = findViewById(R.id.searchButton);</span>
+<span class="fc" id="L55">        sortSpinner = findViewById(R.id.sortSpinner); // Initialize sort spinner</span>
+
+        // Set up RecyclerView with EventsAdapter
+<span class="fc" id="L58">        eventsAdapter = new EventsAdapter(eventsList);</span>
+<span class="fc" id="L59">        eventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));</span>
+<span class="fc" id="L60">        eventsRecyclerView.setAdapter(eventsAdapter);</span>
+
+        // Set up button listeners
+<span class="fc" id="L63">        addEventButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L66">                Intent intent = new Intent(MainPageActivity.this, CreateEventActivity.class);</span>
+<span class="fc" id="L67">                startActivityForResult(intent, 1);</span>
+<span class="fc" id="L68">            }</span>
+        });
+
+<span class="fc" id="L71">        navMessages.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L74">                Intent intent = new Intent(MainPageActivity.this, UserChatActivity.class);</span>
+<span class="fc" id="L75">                startActivity(intent);</span>
+<span class="fc" id="L76">            }</span>
+        });
+
+<span class="fc" id="L79">        navProfile.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L82">                Intent intent = new Intent(MainPageActivity.this, ProfileActivity.class);</span>
+<span class="nc" id="L83">                startActivity(intent);</span>
+<span class="nc" id="L84">            }</span>
+        });
+
+<span class="fc" id="L87">        eventsAdapter.setOnItemClickListener(new EventsAdapter.OnItemClickListener() {</span>
+            @Override
+            public void onItemClick(Event event, int position) {
+<span class="nc" id="L90">                Intent intent = new Intent(MainPageActivity.this, EditEventActivity.class);</span>
+<span class="nc" id="L91">                intent.putExtra(&quot;eventPosition&quot;, position);</span>
+<span class="nc" id="L92">                intent.putExtra(&quot;eventTitle&quot;, event.getTitle());</span>
+<span class="nc" id="L93">                intent.putExtra(&quot;eventDate&quot;, event.getDate());</span>
+<span class="nc" id="L94">                intent.putExtra(&quot;eventTime&quot;, event.getTime());</span>
+<span class="nc" id="L95">                intent.putExtra(&quot;eventLocation&quot;, event.getLocation());</span>
+<span class="nc" id="L96">                intent.putExtra(&quot;eventDescription&quot;, event.getDescription());</span>
+<span class="nc" id="L97">                intent.putExtra(&quot;eventOrganizer&quot;, event.getOrganizerName());</span>
+<span class="nc" id="L98">                startActivityForResult(intent, 2);</span>
+<span class="nc" id="L99">            }</span>
+        });
+
+        // Load events without sorting initially
+<span class="fc" id="L103">        loadEventsWithoutSorting();</span>
+
+        // Search button listener
+<span class="fc" id="L106">        searchButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L109">                String query = searchBar.getText().toString().trim();</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                if (!query.isEmpty()) {</span>
+<span class="nc" id="L111">                    searchEvents(query);</span>
+                } else {
+<span class="nc" id="L113">                    Toast.makeText(MainPageActivity.this, &quot;Please enter a search term&quot;, Toast.LENGTH_SHORT).show();</span>
+                }
+<span class="nc" id="L115">            }</span>
+        });
+
+        // Spinner listener for sorting events
+<span class="fc" id="L119">        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {</span>
+            @Override
+            public void onItemSelected(AdapterView&lt;?&gt; parentView, View selectedItemView, int position, long id) {
+<span class="fc" id="L122">                String selectedOption = (String) parentView.getItemAtPosition(position);</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">                if (selectedOption.equals(&quot;Date&quot;)) {</span>
+<span class="fc" id="L124">                    sortEvents(&quot;date&quot;); // Sort by date</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">                } else if (selectedOption.equals(&quot;Time&quot;)) {</span>
+<span class="nc" id="L126">                    sortEvents(&quot;time&quot;); // Sort by time</span>
+                }
+<span class="fc" id="L128">            }</span>
+
+            @Override
+            public void onNothingSelected(AdapterView&lt;?&gt; parentView) {
+<span class="nc" id="L132">            }</span>
+        });
+<span class="fc" id="L134">    }</span>
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+<span class="nc" id="L138">        super.onActivityResult(requestCode, resultCode, data);</span>
+
+<span class="nc bnc" id="L140" title="All 4 branches missed.">        if (requestCode == 1 &amp;&amp; resultCode == RESULT_OK) {</span>
+<span class="nc" id="L141">            loadEventsWithoutSorting(); // Refresh events list after adding new event</span>
+<span class="nc bnc" id="L142" title="All 4 branches missed.">        } else if (requestCode == 2 &amp;&amp; resultCode == RESULT_OK) {</span>
+<span class="nc" id="L143">            int eventPosition = data.getIntExtra(&quot;eventPosition&quot;, -1);</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">            if (data.getBooleanExtra(&quot;deleteEvent&quot;, false)) {</span>
+<span class="nc bnc" id="L145" title="All 4 branches missed.">                if (eventPosition &gt;= 0 &amp;&amp; eventPosition &lt; eventsList.size()) {</span>
+<span class="nc" id="L146">                    eventsList.remove(eventPosition);</span>
+<span class="nc" id="L147">                    eventsAdapter.notifyDataSetChanged();</span>
+                }
+            } else {
+<span class="nc" id="L150">                String updatedTitle = data.getStringExtra(&quot;eventTitle&quot;);</span>
+<span class="nc" id="L151">                String updatedDate = data.getStringExtra(&quot;eventDate&quot;);</span>
+<span class="nc" id="L152">                String updatedTime = data.getStringExtra(&quot;eventTime&quot;);</span>
+<span class="nc" id="L153">                String updatedLocation = data.getStringExtra(&quot;eventLocation&quot;);</span>
+<span class="nc" id="L154">                String updatedDescription = data.getStringExtra(&quot;eventDescription&quot;);</span>
+<span class="nc" id="L155">                String updatedOrganizer = data.getStringExtra(&quot;eventOrganizer&quot;);</span>
+
+<span class="nc" id="L157">                Event updatedEvent = new Event(updatedTitle, updatedDate, updatedTime, updatedLocation, updatedDescription, updatedOrganizer);</span>
+<span class="nc bnc" id="L158" title="All 4 branches missed.">                if (eventPosition &gt;= 0 &amp;&amp; eventPosition &lt; eventsList.size()) {</span>
+<span class="nc" id="L159">                    eventsList.set(eventPosition, updatedEvent);</span>
+<span class="nc" id="L160">                    eventsAdapter.notifyDataSetChanged();</span>
+                }
+            }
+        }
+<span class="nc" id="L164">    }</span>
+
+    // Method to load events without any sorting
+    private void loadEventsWithoutSorting() {
+<span class="fc" id="L168">        String url = &quot;http://10.90.73.72:8080/events&quot;;</span>
+
+<span class="fc" id="L170">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="fc" id="L171">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+<span class="fc" id="L174">                        eventsList.clear();</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">                        for (int i = 0; i &lt; response.length(); i++) {</span>
+                            try {
+<span class="fc" id="L177">                                JSONObject eventJson = response.getJSONObject(i);</span>
+<span class="fc" id="L178">                                String title = eventJson.getString(&quot;name&quot;);</span>
+<span class="fc" id="L179">                                String date = eventJson.getString(&quot;date&quot;);</span>
+<span class="fc" id="L180">                                String time = eventJson.getString(&quot;time&quot;);</span>
+<span class="fc" id="L181">                                String location = eventJson.getString(&quot;location&quot;);</span>
+<span class="fc" id="L182">                                String description = eventJson.getString(&quot;description&quot;);</span>
+
+<span class="fc bfc" id="L184" title="All 2 branches covered.">                                String organizerName = eventJson.isNull(&quot;organizer&quot;) ? &quot;Unknown&quot; : eventJson.getJSONObject(&quot;organizer&quot;).getString(&quot;username&quot;);</span>
+
+<span class="fc" id="L186">                                Event event = new Event(title, date, time, location, description, organizerName);</span>
+<span class="fc" id="L187">                                eventsList.add(event);</span>
+
+<span class="nc" id="L189">                            } catch (JSONException e) {</span>
+<span class="nc" id="L190">                                Log.e(&quot;LoadEvents&quot;, &quot;JSON Exception: &quot; + e.getMessage());</span>
+<span class="fc" id="L191">                            }</span>
+                        }
+                        // Reverse the list to show the newest events first
+<span class="fc" id="L194">                        Collections.reverse(eventsList);</span>
+<span class="fc" id="L195">                        eventsAdapter.notifyDataSetChanged();</span>
+<span class="fc" id="L196">                    }</span>
+                },
+<span class="fc" id="L198">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc bnc" id="L201" title="All 4 branches missed.">                        String errorMessage = (error.networkResponse != null &amp;&amp; error.networkResponse.data != null)</span>
+<span class="nc" id="L202">                                ? new String(error.networkResponse.data)</span>
+<span class="nc" id="L203">                                : error.getMessage();</span>
+<span class="nc" id="L204">                        Toast.makeText(MainPageActivity.this, &quot;Error fetching events: &quot; + errorMessage, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L205">                        Log.e(&quot;LoadEvents&quot;, &quot;Error: &quot; + errorMessage);</span>
+<span class="nc" id="L206">                    }</span>
+                });
+
+<span class="fc" id="L209">        Volley.newRequestQueue(this).add(jsonArrayRequest);</span>
+<span class="fc" id="L210">    }</span>
+
+
+    // Method to search for events based on the search term
+    private void searchEvents(String query) {
+<span class="nc" id="L215">        String url = &quot;http://coms-3090-041.class.las.iastate.edu:8080/events/search?query=&quot; + query;</span>
+
+<span class="nc" id="L217">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L218">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+<span class="nc" id="L221">                        eventsList.clear();</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">                        for (int i = 0; i &lt; response.length(); i++) {</span>
+                            try {
+<span class="nc" id="L224">                                JSONObject eventJson = response.getJSONObject(i);</span>
+<span class="nc" id="L225">                                String title = eventJson.getString(&quot;name&quot;);</span>
+<span class="nc" id="L226">                                String date = eventJson.getString(&quot;date&quot;);</span>
+<span class="nc" id="L227">                                String time = eventJson.getString(&quot;time&quot;);</span>
+<span class="nc" id="L228">                                String location = eventJson.getString(&quot;location&quot;);</span>
+<span class="nc" id="L229">                                String description = eventJson.getString(&quot;description&quot;);</span>
+
+<span class="nc bnc" id="L231" title="All 2 branches missed.">                                String organizerName = eventJson.isNull(&quot;organizer&quot;) ? &quot;Unknown&quot; : eventJson.getJSONObject(&quot;organizer&quot;).getString(&quot;username&quot;);</span>
+
+<span class="nc" id="L233">                                Event event = new Event(title, date, time, location, description, organizerName);</span>
+<span class="nc" id="L234">                                eventsList.add(event);</span>
+<span class="nc" id="L235">                            } catch (JSONException e) {</span>
+<span class="nc" id="L236">                                Log.e(&quot;SearchEvents&quot;, &quot;JSON Exception: &quot; + e.getMessage());</span>
+<span class="nc" id="L237">                            }</span>
+                        }
+<span class="nc" id="L239">                        eventsAdapter.notifyDataSetChanged();</span>
+<span class="nc" id="L240">                    }</span>
+                },
+<span class="nc" id="L242">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc bnc" id="L245" title="All 4 branches missed.">                        String errorMessage = (error.networkResponse != null &amp;&amp; error.networkResponse.data != null)</span>
+<span class="nc" id="L246">                                ? new String(error.networkResponse.data)</span>
+<span class="nc" id="L247">                                : error.getMessage();</span>
+<span class="nc" id="L248">                        Toast.makeText(MainPageActivity.this, &quot;Error searching events: &quot; + errorMessage, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L249">                        Log.e(&quot;SearchEvents&quot;, &quot;Error: &quot; + errorMessage);</span>
+<span class="nc" id="L250">                    }</span>
+                });
+
+<span class="nc" id="L253">        Volley.newRequestQueue(this).add(jsonArrayRequest);</span>
+<span class="nc" id="L254">    }</span>
+
+    // Method to sort events based on selected sorting option (by date or time)
+    private void sortEvents(String sortBy) {
+<span class="fc" id="L258">        String url = &quot;http://coms-3090-041.class.las.iastate.edu:8080/events/sort?by=&quot; + sortBy;</span>
+
+<span class="fc" id="L260">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="fc" id="L261">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+<span class="nc" id="L264">                        eventsList.clear();</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">                        for (int i = 0; i &lt; response.length(); i++) {</span>
+                            try {
+<span class="nc" id="L267">                                JSONObject eventJson = response.getJSONObject(i);</span>
+<span class="nc" id="L268">                                String title = eventJson.getString(&quot;name&quot;);</span>
+<span class="nc" id="L269">                                String date = eventJson.getString(&quot;date&quot;);</span>
+<span class="nc" id="L270">                                String time = eventJson.getString(&quot;time&quot;);</span>
+<span class="nc" id="L271">                                String location = eventJson.getString(&quot;location&quot;);</span>
+<span class="nc" id="L272">                                String description = eventJson.getString(&quot;description&quot;);</span>
+
+<span class="nc bnc" id="L274" title="All 2 branches missed.">                                String organizerName = eventJson.isNull(&quot;organizer&quot;) ? &quot;Unknown&quot; : eventJson.getJSONObject(&quot;organizer&quot;).getString(&quot;username&quot;);</span>
+
+<span class="nc" id="L276">                                Event event = new Event(title, date, time, location, description, organizerName);</span>
+<span class="nc" id="L277">                                eventsList.add(event);</span>
+<span class="nc" id="L278">                            } catch (JSONException e) {</span>
+<span class="nc" id="L279">                                Log.e(&quot;SortEvents&quot;, &quot;JSON Exception: &quot; + e.getMessage());</span>
+<span class="nc" id="L280">                            }</span>
+                        }
+<span class="nc" id="L282">                        eventsAdapter.notifyDataSetChanged();</span>
+<span class="nc" id="L283">                    }</span>
+                },
+<span class="fc" id="L285">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="pc bpc" id="L288" title="2 of 4 branches missed.">                        String errorMessage = (error.networkResponse != null &amp;&amp; error.networkResponse.data != null)</span>
+<span class="fc" id="L289">                                ? new String(error.networkResponse.data)</span>
+<span class="pc" id="L290">                                : error.getMessage();</span>
+<span class="fc" id="L291">                        Toast.makeText(MainPageActivity.this, &quot;Error sorting events: &quot; + errorMessage, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L292">                        Log.e(&quot;SortEvents&quot;, &quot;Error: &quot; + errorMessage);</span>
+<span class="fc" id="L293">                    }</span>
+                });
+
+<span class="fc" id="L296">        Volley.newRequestQueue(this).add(jsonArrayRequest);</span>
+<span class="fc" id="L297">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.0</div></body></html>

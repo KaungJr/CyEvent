@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChatAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyEvents</a> &gt; <span class="el_source">ChatAdapter.java</span></div><h1>ChatAdapter.java</h1><pre class="source lang-java linenums">package com.example.CyEvents;
+
+import android.net.Uri;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.Sign_up_Page.R;
+import java.util.List;
+
+/**
+ * ChatAdapter is a RecyclerView adapter for displaying a list of chat messages.
+ * It handles different types of messages including text, image, and replies.
+ */
+public class ChatAdapter extends RecyclerView.Adapter&lt;RecyclerView.ViewHolder&gt; {
+
+    // Constants for different view types
+    private static final int VIEW_TYPE_MESSAGE = 0;
+    private static final int VIEW_TYPE_REPLY = 1;
+    private static final int VIEW_TYPE_IMAGE = 2; // New type for image messages
+
+    private List&lt;ChatMessage&gt; messages; // List of chat messages to display
+    private OnMessageClickListener listener; // Listener for message interactions
+
+<span class="fc" id="L28">    public ChatAdapter(List&lt;ChatMessage&gt; messages, OnMessageClickListener listener) {</span>
+<span class="fc" id="L29">        this.messages = messages;</span>
+<span class="fc" id="L30">        this.listener = listener;</span>
+<span class="fc" id="L31">    }</span>
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if (viewType == VIEW_TYPE_IMAGE) {</span>
+<span class="nc" id="L37">            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_image, parent, false);</span>
+<span class="nc" id="L38">            return new ImageViewHolder(view);</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        } else if (viewType == VIEW_TYPE_MESSAGE) {</span>
+<span class="fc" id="L40">            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_message, parent, false);</span>
+<span class="fc" id="L41">            return new MessageViewHolder(view);</span>
+        } else {
+<span class="nc" id="L43">            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_reply, parent, false);</span>
+<span class="nc" id="L44">            return new ReplyViewHolder(view);</span>
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+<span class="fc" id="L50">        ChatMessage chatMessage = messages.get(position);</span>
+
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if (holder instanceof MessageViewHolder) {</span>
+<span class="fc" id="L53">            MessageViewHolder messageHolder = (MessageViewHolder) holder;</span>
+<span class="fc" id="L54">            messageHolder.messageText.setText(chatMessage.getMessage());</span>
+<span class="fc" id="L55">            messageHolder.timestampText.setText(chatMessage.getTimestamp());</span>
+
+            // Remove the status display
+            // messageHolder.statusText.setText(statusText);  // Removed this line
+
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            if (!chatMessage.getReaction().isEmpty()) {</span>
+<span class="nc" id="L61">                messageHolder.reactionText.setVisibility(View.VISIBLE);</span>
+<span class="nc" id="L62">                messageHolder.reactionText.setText(chatMessage.getReaction());</span>
+            } else {
+<span class="fc" id="L64">                messageHolder.reactionText.setVisibility(View.GONE);</span>
+            }
+
+<span class="fc" id="L67">            messageHolder.itemView.setOnClickListener(v -&gt; {</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">                if (listener != null) {</span>
+<span class="nc" id="L69">                    listener.onMessageClick(chatMessage.getMessage(), position);</span>
+                }
+<span class="nc" id="L71">            });</span>
+
+<span class="pc bnc" id="L73" title="All 2 branches missed.">        } else if (holder instanceof ImageViewHolder) {</span>
+<span class="nc" id="L74">            ImageViewHolder imageHolder = (ImageViewHolder) holder;</span>
+<span class="nc" id="L75">            imageHolder.timestampText.setText(chatMessage.getTimestamp());</span>
+<span class="nc" id="L76">            imageHolder.imageView.setImageURI(Uri.parse(chatMessage.getImageUri()));</span>
+
+<span class="nc" id="L78">            imageHolder.itemView.setOnClickListener(v -&gt; {</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">                if (listener != null) {</span>
+<span class="nc" id="L80">                    listener.onMessageClick(chatMessage.getImageUri(), position);</span>
+                }
+<span class="nc" id="L82">            });</span>
+
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        } else if (holder instanceof ReplyViewHolder) {</span>
+<span class="nc" id="L85">            ReplyViewHolder replyHolder = (ReplyViewHolder) holder;</span>
+<span class="nc" id="L86">            replyHolder.originalMessageText.setText(chatMessage.getOriginalMessage());</span>
+<span class="nc" id="L87">            replyHolder.replyText.setText(chatMessage.getReplyText());</span>
+        }
+<span class="fc" id="L89">    }</span>
+
+    @Override
+    public int getItemCount() {
+<span class="fc" id="L93">        return messages.size();</span>
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+<span class="fc" id="L98">        ChatMessage message = messages.get(position);</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (message.isImageMessage()) {</span>
+<span class="nc" id="L100">            return VIEW_TYPE_IMAGE;</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        } else if (message.isReply()) {</span>
+<span class="nc" id="L102">            return VIEW_TYPE_REPLY;</span>
+        }
+<span class="fc" id="L104">        return VIEW_TYPE_MESSAGE;</span>
+    }
+
+    public interface OnMessageClickListener {
+        void onMessageClick(String message, int position);
+        void onDeleteMessage(int position);
+    }
+
+    public class MessageViewHolder extends RecyclerView.ViewHolder {
+        TextView messageText, reactionText, timestampText;
+
+<span class="fc" id="L115">        public MessageViewHolder(@NonNull View itemView) {</span>
+<span class="fc" id="L116">            super(itemView);</span>
+<span class="fc" id="L117">            messageText = itemView.findViewById(R.id.messageText);</span>
+<span class="fc" id="L118">            reactionText = itemView.findViewById(R.id.reactionText);</span>
+<span class="fc" id="L119">            timestampText = itemView.findViewById(R.id.timestampText);</span>
+            // statusText = itemView.findViewById(R.id.statusText); // Removed this line
+<span class="fc" id="L121">        }</span>
+    }
+
+    public class ImageViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView;
+        TextView timestampText;
+
+<span class="nc" id="L128">        public ImageViewHolder(@NonNull View itemView) {</span>
+<span class="nc" id="L129">            super(itemView);</span>
+<span class="nc" id="L130">            imageView = itemView.findViewById(R.id.messageImage);</span>
+<span class="nc" id="L131">            timestampText = itemView.findViewById(R.id.timestampText);</span>
+<span class="nc" id="L132">        }</span>
+    }
+
+    public class ReplyViewHolder extends RecyclerView.ViewHolder {
+        TextView replyText, originalMessageText;
+
+<span class="nc" id="L138">        public ReplyViewHolder(@NonNull View itemView) {</span>
+<span class="nc" id="L139">            super(itemView);</span>
+<span class="nc" id="L140">            replyText = itemView.findViewById(R.id.replyText);</span>
+<span class="nc" id="L141">            originalMessageText = itemView.findViewById(R.id.originalMessageText);</span>
+<span class="nc" id="L142">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.0</div></body></html>

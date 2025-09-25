@@ -1,0 +1,192 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserTypeController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.roundTrip1.test.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: UserTypeController (coms309.roundTrip1.test.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserTypeController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (2/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    13%
+  </span>
+  <span class="absValue">
+    (3/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.roundTrip1.test.controller;
+&nbsp;
+&nbsp;import coms309.roundTrip1.test.model.UserType;
+&nbsp;import coms309.roundTrip1.test.repository.UserTypeRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class UserTypeController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserTypeRepository userTypeRepository;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/userTypes&quot;)
+&nbsp;    public List&lt;UserType&gt; GetAllUserTypes(){
+<b class="nc">&nbsp;        return userTypeRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;userTypes/{id}&quot;)
+&nbsp;    public UserType GetUserType(@PathVariable Long id) {
+<b class="nc">&nbsp;        Optional&lt;UserType&gt; existingUserTypeOptional = userTypeRepository.findById(id);</b>
+&nbsp;
+<b class="nc">&nbsp;        return existingUserTypeOptional.get();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/userTypes&quot;)
+&nbsp;    UserType PostUserType(@RequestBody UserType newUserType) {
+<b class="fc">&nbsp;        userTypeRepository.save(newUserType);</b>
+<b class="fc">&nbsp;        return newUserType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/userTypes/{id}&quot;)
+&nbsp;    public Map&lt;String, Object&gt; updateUserType(@PathVariable Long id, @RequestBody UserType updatedUserType) {
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;UserType&gt; existingUserTypeOptional = userTypeRepository.findById(id);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (existingUserTypeOptional.isPresent()) {</b>
+<b class="nc">&nbsp;            UserType existingUserType = existingUserTypeOptional.get();</b>
+&nbsp;
+<b class="nc">&nbsp;            existingUserType.setType(updatedUserType.getType());</b>
+&nbsp;
+<b class="nc">&nbsp;            userTypeRepository.save(existingUserType);</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;UserType updated successfully&quot;);</b>
+<b class="nc">&nbsp;            response.put(&quot;UserType&quot;, existingUserType);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;UserType not found with id: &quot; + id);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/userTypes/{id}&quot;)
+&nbsp;    public Map&lt;String, String&gt; DeleteUserType(@PathVariable Long id) {
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;UserType&gt; existingUserTypeOptional = userTypeRepository.findById(id);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (existingUserTypeOptional.isPresent()) {</b>
+<b class="nc">&nbsp;            userTypeRepository.deleteById(id);</b>
+&nbsp;
+<b class="nc">&nbsp;            response.put(&quot;message&quot;,&quot;UserType deleted successfully&quot;);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;UserType not found with id: &quot; + id);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-03 23:15</div>
+</div>
+</body>
+</html>

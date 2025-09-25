@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">My Application</string>
+
+
+        <string name="welcome_message">Welcome to CyEvents</string>
+        <string name="sign_in">Sign In</string>
+        <string name="create_account">Create Account</string>
+        <string name="continue_as_guest">Continue as Guest</string>
+    <string name="image_message">Image message</string>
+
+    <string-array name="sort_options">
+        <item>Select Sorting</item>
+        <item>Date</item>
+        <item>Time</item>
+    </string-array>
+
+
+
+</resources>

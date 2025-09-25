@@ -1,0 +1,212 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Profile</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.roundTrip1.test.model</a>
+</div>
+
+<h1>Coverage Summary for Class: Profile (coms309.roundTrip1.test.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Profile</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.2%
+  </span>
+  <span class="absValue">
+    (15/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.5%
+  </span>
+  <span class="absValue">
+    (17/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.roundTrip1.test.model;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;import jakarta.persistence.*;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Entity
+&nbsp;public class Profile {
+&nbsp;
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private @Id Long id;
+&nbsp;    private String username;
+&nbsp;    private String email;
+&nbsp;    private String password;
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;user_type_id&quot;)
+&nbsp;    private UserType userType;
+&nbsp;
+&nbsp;    @OneToMany(mappedBy = &quot;organizer&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+&nbsp;    private List&lt;Event&gt; events;
+&nbsp;
+&nbsp;    @OneToMany(mappedBy = &quot;profile&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+&nbsp;    private List&lt;Interest&gt; interests;
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;profile&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</b>
+&nbsp;    @JsonIgnore
+&nbsp;    private List&lt;RSVP&gt; rsvps = new ArrayList&lt;&gt;();
+&nbsp;
+&nbsp;    // New relationship for friends
+<b class="fc">&nbsp;    @ManyToMany</b>
+&nbsp;    @JoinTable(
+&nbsp;            name = &quot;friends&quot;, // Table name for the many-to-many relationship
+&nbsp;            joinColumns = @JoinColumn(name = &quot;profile_id&quot;), // Current profile
+&nbsp;            inverseJoinColumns = @JoinColumn(name = &quot;friend_id&quot;) // Friend profile
+&nbsp;    )
+&nbsp;    private List&lt;Profile&gt; friends = new ArrayList&lt;&gt;();
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    public Profile() {</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Long id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getUsername() {
+<b class="fc">&nbsp;        return username;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUsername(String username) {
+<b class="fc">&nbsp;        this.username = username;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEmail() {
+<b class="fc">&nbsp;        return email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEmail(String email) {
+<b class="fc">&nbsp;        this.email = email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getPassword() {
+<b class="fc">&nbsp;        return password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public UserType getUserType() {
+<b class="fc">&nbsp;        return userType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUserType(UserType userType) {
+<b class="fc">&nbsp;        this.userType = userType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPassword(String password) {
+<b class="fc">&nbsp;        this.password = password;</b>
+&nbsp;    }
+&nbsp;    public List&lt;Interest&gt; getInterests() {
+<b class="fc">&nbsp;        return interests;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setInterests(List&lt;Interest&gt; interests) {
+<b class="fc">&nbsp;        this.interests = interests;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;RSVP&gt; getRsvps() {
+<b class="nc">&nbsp;        return rsvps;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setRsvps(List&lt;RSVP&gt; rsvps) {
+<b class="nc">&nbsp;        this.rsvps = rsvps;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Profile&gt; getFriends() {
+<b class="fc">&nbsp;        return friends;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setFriends(List&lt;Profile&gt; friends) {
+<b class="fc">&nbsp;        this.friends = friends;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-10 11:26</div>
+</div>
+</body>
+</html>

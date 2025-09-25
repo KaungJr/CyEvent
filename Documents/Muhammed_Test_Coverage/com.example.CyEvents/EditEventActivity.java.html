@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EditEventActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyEvents</a> &gt; <span class="el_source">EditEventActivity.java</span></div><h1>EditEventActivity.java</h1><pre class="source lang-java linenums">package com.example.CyEvents;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.Sign_up_Page.R;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+/**
+ * EditEventActivity class allows users to update or delete event details.
+ * It provides an interface to edit the event's name, date, time, location, description, and organizer.
+ * This activity is used to update existing events or delete them from the backend.
+ */
+<span class="nc" id="L25">public class EditEventActivity extends AppCompatActivity {</span>
+
+    // UI elements for event input fields and buttons
+    private EditText eventTitleInput, eventDateInput, eventTimeInput, eventLocationInput, eventDescriptionInput, eventOrganizerInput;
+    private Button saveEventButton, deleteEventButton;
+    private EditText eventApprovalStatusInput, eventApprovalReasonInput;
+
+    // Variable to store the event ID
+    private int eventId;
+
+    /**
+     * Initializes the activity and sets up the UI elements.
+     * Also sets the data from the Intent to populate the event details for editing.
+     * @param savedInstanceState Bundle containing the previous state of the activity, if any.
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L42">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L43">        setContentView(R.layout.activity_edit_event);</span>
+
+        // Initialize UI elements
+<span class="nc" id="L46">        eventTitleInput = findViewById(R.id.eventTitleInput);</span>
+<span class="nc" id="L47">        eventDateInput = findViewById(R.id.eventDateInput);</span>
+<span class="nc" id="L48">        eventTimeInput = findViewById(R.id.eventTimeInput);</span>
+<span class="nc" id="L49">        eventLocationInput = findViewById(R.id.eventLocationInput);</span>
+<span class="nc" id="L50">        eventDescriptionInput = findViewById(R.id.eventDescriptionInput);</span>
+<span class="nc" id="L51">        eventOrganizerInput = findViewById(R.id.eventOrganizerInput);</span>
+<span class="nc" id="L52">        eventApprovalStatusInput = findViewById(R.id.eventApprovalStatusInput);</span>
+<span class="nc" id="L53">        eventApprovalReasonInput = findViewById(R.id.eventApprovalReasonInput);</span>
+<span class="nc" id="L54">        saveEventButton = findViewById(R.id.saveEventButton);</span>
+<span class="nc" id="L55">        deleteEventButton = findViewById(R.id.deleteEventButton);</span>
+
+        // Retrieve event details passed via Intent
+<span class="nc" id="L58">        Intent intent = getIntent();</span>
+<span class="nc" id="L59">        eventId = intent.getIntExtra(&quot;eventId&quot;, -1);</span>
+<span class="nc" id="L60">        String eventTitle = intent.getStringExtra(&quot;eventTitle&quot;);</span>
+<span class="nc" id="L61">        String eventDate = intent.getStringExtra(&quot;eventDate&quot;);</span>
+<span class="nc" id="L62">        String eventTime = intent.getStringExtra(&quot;eventTime&quot;);</span>
+<span class="nc" id="L63">        String eventLocation = intent.getStringExtra(&quot;eventLocation&quot;);</span>
+<span class="nc" id="L64">        String eventDescription = intent.getStringExtra(&quot;eventDescription&quot;);</span>
+<span class="nc" id="L65">        String eventOrganizer = intent.getStringExtra(&quot;eventOrganizer&quot;);</span>
+<span class="nc" id="L66">        String approvalStatus = intent.getStringExtra(&quot;approvalStatus&quot;);</span>
+<span class="nc" id="L67">        String approvalReason = intent.getStringExtra(&quot;approvalReason&quot;);</span>
+
+        // Populate the input fields with the current event details
+<span class="nc" id="L70">        eventTitleInput.setText(eventTitle);</span>
+<span class="nc" id="L71">        eventDateInput.setText(eventDate);</span>
+<span class="nc" id="L72">        eventTimeInput.setText(eventTime);</span>
+<span class="nc" id="L73">        eventLocationInput.setText(eventLocation);</span>
+<span class="nc" id="L74">        eventDescriptionInput.setText(eventDescription);</span>
+<span class="nc" id="L75">        eventOrganizerInput.setText(eventOrganizer);</span>
+<span class="nc" id="L76">        eventApprovalStatusInput.setText(approvalStatus);  // Set approval status</span>
+<span class="nc" id="L77">        eventApprovalReasonInput.setText(approvalReason);  // Set approval reason</span>
+
+        // Set up listeners for buttons
+<span class="nc" id="L80">        saveEventButton.setOnClickListener(v -&gt; updateEvent(eventId));</span>
+<span class="nc" id="L81">        deleteEventButton.setOnClickListener(v -&gt; deleteEvent(eventId));</span>
+<span class="nc" id="L82">    }</span>
+
+    /**
+     * Sends a request to update the event details on the backend.
+     * Updates the event using the provided event ID.
+     * @param id The event ID to be updated.
+     */
+    private void updateEvent(int id) {
+<span class="nc" id="L90">        String url = &quot;http://10.90.73.72:8080/events/98&quot;; // Use the actual event ID in the URL</span>
+
+        try {
+            // Validate inputs
+<span class="nc bnc" id="L94" title="All 2 branches missed.">            if (eventTitleInput.getText().toString().trim().isEmpty() ||</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">                    eventDateInput.getText().toString().trim().isEmpty() ||</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                    eventTimeInput.getText().toString().trim().isEmpty() ||</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">                    eventLocationInput.getText().toString().trim().isEmpty() ||</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">                    eventDescriptionInput.getText().toString().trim().isEmpty() ||</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                    eventOrganizerInput.getText().toString().trim().isEmpty()) {</span>
+<span class="nc" id="L100">                Toast.makeText(this, &quot;Please fill all fields&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L101">                return;</span>
+            }
+
+            // Create JSON object with the new structure expected by the backend
+<span class="nc" id="L105">            JSONObject event = new JSONObject();</span>
+<span class="nc" id="L106">            event.put(&quot;name&quot;, eventTitleInput.getText().toString().trim());</span>
+<span class="nc" id="L107">            event.put(&quot;description&quot;, eventDescriptionInput.getText().toString().trim());</span>
+<span class="nc" id="L108">            event.put(&quot;date&quot;, eventDateInput.getText().toString().trim());</span>
+<span class="nc" id="L109">            event.put(&quot;time&quot;, eventTimeInput.getText().toString().trim());</span>
+<span class="nc" id="L110">            event.put(&quot;location&quot;, eventLocationInput.getText().toString().trim());</span>
+
+            // Add organizer details (id)
+            try {
+<span class="nc" id="L114">                int organizerId = Integer.parseInt(eventOrganizerInput.getText().toString().trim());</span>
+<span class="nc" id="L115">                JSONObject organizer = new JSONObject();</span>
+<span class="nc" id="L116">                organizer.put(&quot;id&quot;, organizerId);</span>
+<span class="nc" id="L117">                event.put(&quot;organizer&quot;, organizer);</span>
+<span class="nc" id="L118">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L119">                Toast.makeText(this, &quot;Invalid organizer ID&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L120">                return;</span>
+<span class="nc" id="L121">            }</span>
+
+            // Add approval details from the input fields
+<span class="nc" id="L124">            String approvalStatus = eventApprovalStatusInput.getText().toString().trim();</span>
+<span class="nc" id="L125">            String approvalReason = eventApprovalReasonInput.getText().toString().trim();</span>
+
+            // Check if approval status or reason is empty
+<span class="nc bnc" id="L128" title="All 4 branches missed.">            if (approvalStatus.isEmpty() || approvalReason.isEmpty()) {</span>
+<span class="nc" id="L129">                Toast.makeText(this, &quot;Please provide approval status and reason&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L130">                return;</span>
+            }
+
+<span class="nc" id="L133">            JSONObject approval = new JSONObject();</span>
+<span class="nc" id="L134">            approval.put(&quot;isApproved&quot;, approvalStatus);</span>
+<span class="nc" id="L135">            approval.put(&quot;approvalReason&quot;, approvalReason);</span>
+<span class="nc" id="L136">            event.put(&quot;approval&quot;, approval);</span>
+
+            // Send PUT request
+<span class="nc" id="L139">            saveEventButton.setEnabled(false);</span>
+<span class="nc" id="L140">            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, event,</span>
+                    response -&gt; {
+<span class="nc" id="L142">                        saveEventButton.setEnabled(true);</span>
+<span class="nc" id="L143">                        Toast.makeText(EditEventActivity.this, &quot;Event updated successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L144">                        finish();</span>
+<span class="nc" id="L145">                    },</span>
+                    error -&gt; {
+<span class="nc" id="L147">                        saveEventButton.setEnabled(true);</span>
+<span class="nc" id="L148">                        String errorMessage = error.getMessage();</span>
+<span class="nc bnc" id="L149" title="All 4 branches missed.">                        if (error.networkResponse != null &amp;&amp; error.networkResponse.data != null) {</span>
+<span class="nc" id="L150">                            errorMessage = new String(error.networkResponse.data);</span>
+                        }
+<span class="nc" id="L152">                        Log.e(&quot;UpdateEventError&quot;, errorMessage);</span>
+<span class="nc" id="L153">                        Toast.makeText(EditEventActivity.this, &quot;Error updating event: &quot; + errorMessage, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L154">                    });</span>
+
+<span class="nc" id="L156">            Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="nc" id="L157">        } catch (JSONException e) {</span>
+<span class="nc" id="L158">            e.printStackTrace();</span>
+<span class="nc" id="L159">            Toast.makeText(this, &quot;Error creating JSON object&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L160">        }</span>
+<span class="nc" id="L161">    }</span>
+
+    /**
+     * Sends a request to delete the event from the backend.
+     * @param id The event ID to be deleted.
+     */
+    private void deleteEvent(int id) {
+<span class="nc" id="L168">        String url = &quot;http://10.90.73.72:8080/events/97&quot;; // Use the actual event ID in the URL</span>
+
+        // Show loading message
+<span class="nc" id="L171">        deleteEventButton.setEnabled(false); // Disable button to prevent multiple requests</span>
+
+        // Send a DELETE request to remove the event
+<span class="nc" id="L174">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null,</span>
+                response -&gt; {
+<span class="nc" id="L176">                    deleteEventButton.setEnabled(true); // Re-enable button after request is complete</span>
+<span class="nc" id="L177">                    Toast.makeText(EditEventActivity.this, &quot;Event deleted successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L178">                    finish(); // Close this activity and return to the previous one</span>
+<span class="nc" id="L179">                },</span>
+                error -&gt; {
+<span class="nc" id="L181">                    deleteEventButton.setEnabled(true);</span>
+<span class="nc" id="L182">                    String errorMessage = error.getMessage();</span>
+<span class="nc bnc" id="L183" title="All 4 branches missed.">                    if (error.networkResponse != null &amp;&amp; error.networkResponse.data != null) {</span>
+<span class="nc" id="L184">                        errorMessage = new String(error.networkResponse.data);</span>
+                    }
+                    // Log the error details
+<span class="nc" id="L187">                    Log.e(&quot;DeleteEventError&quot;, errorMessage);</span>
+<span class="nc" id="L188">                    Toast.makeText(EditEventActivity.this, &quot;Error deleting event: &quot; + errorMessage, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L189">                });</span>
+
+        // Add the request to the Volley request queue
+<span class="nc" id="L192">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="nc" id="L193">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.0</div></body></html>

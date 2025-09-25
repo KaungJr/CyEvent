@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/LouisvilleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/AnchorageButton"
+        android:text="Time in Louisville"
+        android:onClick="onClickLouisville" />
+
+    <Button
+        android:id="@+id/AnchorageButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Time in Anchorage"
+        android:onClick="onClickAnchorage" />
+
+    <Button
+        android:id="@+id/CologneButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/LouisvilleButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Time in Cologne"
+        android:onClick="onClickCologne" />
+
+    <TextClock
+        android:id="@+id/textClock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:format24Hour="hh:mm:ss a"
+        android:textSize="54sp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
