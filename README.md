@@ -1,6 +1,6 @@
 # CyEvent
 
-Android app to centralize ISU campus events, enabling students to discover, track, and participate in activities with personalized recommendations.
+Android app to centralize ISU campus events, enabling students to discover, track, and participate in activities with personalized recommendations. Features include an interactive calendar, real-time messaging, attendance tracking, and backend integration via Spring Boot.
 
 ---
 
